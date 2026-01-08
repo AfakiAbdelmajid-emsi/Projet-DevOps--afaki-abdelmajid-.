@@ -1,24 +1,22 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.11'
-            args '-u root:root'
-        }
-    }
+    agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Install dependencies') {
+        stage('Install Python & dependencies') {
             steps {
                 sh '''
-                python --version
-                python -m pip install --upgrade pip
-                pip install -r requirements.txt
+                apt-get update
+                apt-get install -y python3 python3-pip
+                python3 --version
+                pip3 install --upgrade pip
+                pip3 install -r requirements.txt
                 '''
             }
         }
@@ -26,7 +24,7 @@ pipeline {
         stage('Run tests') {
             steps {
                 sh '''
-                python -m pytest
+                python3 -m pytest
                 '''
             }
         }
