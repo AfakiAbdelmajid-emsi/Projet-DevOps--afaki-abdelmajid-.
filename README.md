@@ -1,253 +1,211 @@
-# DevOps CI/CD Pipeline with Jenkins
+# 🚀 DevOps CI/CD Pipeline with Jenkins
 
-Réalisé par : afaki abdelmajid
+## 📌 Project Overview
 
-📌 Project Overview
-
-This project demonstrates the implementation of a CI/CD (Continuous Integration / Continuous Deployment) pipeline using Jenkins, integrated with GitHub, Docker, Python, and Slack.
+This project demonstrates the implementation of a **CI/CD (Continuous Integration / Continuous Deployment) pipeline** using **Jenkins**, integrated with **GitHub**, **Docker**, **Python**, **Pytest**, **ngrok**, and **Slack**.
 
 The pipeline is fully automated:
+- Any **push to GitHub** triggers Jenkins automatically
+- Jenkins builds the project
+- Runs **unit tests**
+- **Deploys only if tests pass**
+- Sends **Slack notifications** on success or failure
 
-Any push to GitHub triggers Jenkins
+---
 
-Jenkins builds the project
+## 🧱 Technologies Used
 
-Runs unit tests
+### 🔹 Technologies required by the module
+- **GitHub** – Source code management and webhook triggering
+- **Jenkins** – CI/CD automation server
+- **Docker** – Running Jenkins in an isolated container
 
-Deploys only if tests pass
+### 🔹 Additional technologies
+- **Python** – Sample application language
+- **Pytest** – Unit testing framework
+- **ngrok** – Exposes local Jenkins to GitHub webhooks
+- **Slack** – Pipeline status notifications
 
-Sends Slack notifications on success or failure
+---
 
-🧱 Technologies Used
-🔹 Mandatory (Module Requirements)
+## 📁 Project Structure
 
-GitHub – Source code management & webhook trigger
-
-Jenkins – CI/CD automation server
-
-Docker – Run Jenkins in an isolated environment
-
-🔹 Additional Technologies
-
-Python – Sample application
-
-Pytest – Unit testing framework
-
-ngrok – Expose local Jenkins to GitHub webhooks
-
-Slack – Pipeline status notifications
-
-📁 Project Structure
+```
 .
-├── app.py                 # Python application
-├── test_app.py            # Unit tests (pytest)
-├── requirements.txt       # Python dependencies
-├── Jenkinsfile            # Jenkins pipeline definition
-├── pytest.ini             # Pytest configuration
-└── README.md              # Project documentation
+├── app.py              # Python application
+├── test_app.py         # Unit tests
+├── requirements.txt    # Python dependencies
+├── Jenkinsfile         # Jenkins pipeline definition
+├── pytest.ini         # Pytest configuration
+└── README.md           # Project documentation
+```
 
-⚙️ Prerequisites
+---
 
-Make sure you have installed:
+## ⚙️ Prerequisites
 
-Docker
+Make sure the following are installed:
 
-Git
+- Docker
+- Git
+- ngrok
+- A GitHub account
+- A Slack workspace
 
-ngrok (free version is enough)
+---
 
-A GitHub account
+## 🐳 Run Jenkins with Docker
 
-A Slack workspace (for notifications)
+Start Jenkins using Docker:
 
-🐳 Step 1 – Run Jenkins with Docker
-
-Run Jenkins in a Docker container:
-
+```bash
 docker run -d \
   --name jenkins \
   -p 8080:8080 \
   -p 50000:50000 \
   jenkins/jenkins:lts-jdk17
+```
 
+Check Jenkins container:
 
-Check that Jenkins is running:
-
+```bash
 docker ps
+```
 
+Access Jenkins UI:
 
-Then open Jenkins in your browser:
-
+```
 http://localhost:8080
+```
 
-🔑 Step 2 – Initial Jenkins Setup
+## 🔑 Jenkins Initial Setup
 
 Get the initial admin password:
 
+```bash
 docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+```
 
+Then:
 
-Install recommended plugins
+1. Install recommended plugins
+2. Create admin user
+3. Ensure these plugins are installed:
+   - Git
+   - GitHub Integration
+   - Pipeline
 
-Create an admin user
+## 🔁 Create Jenkins Pipeline Job
 
-Install plugins if not already installed:
+1. **New Item** → **Pipeline**
+2. Job name: `PipeLine-afaki-abdelmajid`
+3. **Source Code Management** → **Git**
+4. Repository URL:
 
-Git
-
-GitHub Integration
-
-Pipeline
-
-🔁 Step 3 – Create Jenkins Pipeline Job
-
-New Item → Pipeline
-
-Name: PipeLine-afaki-abdelmajid
-
-Source code management → Git
-
-Repository URL:
-
+```
 https://github.com/AfakiAbdelmajid-emsi/Projet-DevOps--afaki-abdelmajid-..git
+```
 
+5. Add GitHub credentials (Personal Access Token)
+6. **Pipeline definition**: Pipeline script from SCM
+7. Branch: `main`
+8. Save
 
-Credentials: GitHub Personal Access Token
-
-Pipeline definition: Pipeline script from SCM
-
-Branch: main
-
-Save
-
-🌐 Step 4 – Expose Jenkins with ngrok
+## 🌐 Expose Jenkins Using ngrok
 
 Start ngrok:
 
+```bash
 ngrok http 8080
+```
 
+You will get a public URL such as:
 
-You will get a public URL like:
-
+```
 https://xxxx.ngrok-free.dev
+```
 
-🔗 Step 5 – Configure GitHub Webhook
+## 🔗 Configure GitHub Webhook
 
 In your GitHub repository:
 
-Settings → Webhooks → Add webhook
+1. **Settings** → **Webhooks** → **Add webhook**
+2. Payload URL:
 
-Payload URL:
-
+```
 https://xxxx.ngrok-free.dev/github-webhook/
+```
 
+3. Content type:
 
-Content type:
-
+```
 application/json
+```
 
+4. Events:
 
-Events:
-
+```
 Just the push event
+```
 
+5. Active: ✔
 
-Active: ✅
+## 🧪 Pipeline Execution Flow
 
-🧪 Step 6 – How the Pipeline Works
-Jenkinsfile stages:
+The pipeline defined in the Jenkinsfile includes:
 
-Checkout – Pull code from GitHub
+1. **Checkout** – Pull code from GitHub
+2. **Setup Python Environment**
+   - Install Python
+   - Create virtual environment
+   - Install dependencies
+3. **Run Tests**
+   - Execute pytest
+4. **Deploy**
+   - Runs only if tests pass
+5. **Post Actions**
+   - Send Slack notification
 
-Setup Python Environment
-
-Install Python
-
-Create virtual environment
-
-Install dependencies
-
-Run Tests
-
-Execute pytest
-
-Deploy
-
-Executed only if tests pass
-
-Post Actions
-
-Send Slack notification (SUCCESS or FAILURE)
-
-❌ Example: Test Failure Behavior
+## ❌ Test Failure Behavior
 
 If a test fails:
 
-Jenkins marks the build as FAILED
+- Jenkins marks the build as **FAILED**
+- Deploy stage is **skipped**
+- Slack receives ❌ **Pipeline FAILED**
 
-Deploy stage is skipped
+This behavior demonstrates correct CI/CD quality control.
 
-Slack receives ❌ Pipeline FAILED
+## ▶️ Trigger the Pipeline
 
-This behavior is intentional and demonstrates quality gating.
+Make a change and push it:
 
-📣 Slack Notifications
-
-Slack notifications are sent automatically:
-
-✅ Pipeline SUCCESS
-
-❌ Pipeline FAILED
-
-Slack Webhook URL is stored as a Jenkins credential for security.
-
-▶️ How to Trigger the Pipeline
-
-Make any change in the project, for example:
-
+```bash
 git add .
 git commit -m "test pipeline"
 git push
+```
 
+Jenkins will start automatically.
 
-➡️ Jenkins will start automatically
-➡️ No manual action required
+## 📊 Expected Results
 
-📊 Expected Results
+- ✅ Automatic pipeline trigger on GitHub push
+- ✅ Unit tests executed
+- ✅ Deployment blocked on failure
+- ✅ Slack notifications sent
+- ✅ Full traceability of builds and commits
 
-Jenkins build triggered by GitHub push
-
-Unit tests executed automatically
-
-Deployment blocked if tests fail
-
-Slack notifications received
-
-Full traceability of commits and builds
-
-🎓 Educational Value
+## 🎓 Educational Value
 
 This project demonstrates:
 
-Real CI/CD pipeline
+- Real CI/CD automation
+- Jenkins pipeline best practices
+- Test-driven deployment
+- DevOps workflow automation
 
-Jenkins security behavior
+## 👤 Author
 
-Importance of unit tests
-
-DevOps best practices
-
-Automation without manual intervention
-
-📌 Notes
-
-ngrok URL changes after restart → update GitHub webhook if needed
-
-CSRF protection is handled by Jenkins webhook endpoint
-
-This setup is suitable for academic and demo purposes
-
-👤 Author
-
-Abdelmajid Afaki
+**Abdelmajid Afaki**  
 DevOps Project – 2025/2026
