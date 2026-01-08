@@ -6,7 +6,6 @@ pipeline {
     }
 
     stages {
-
         stage('Setup Python & venv') {
             steps {
                 sh '''
@@ -35,6 +34,18 @@ pipeline {
         stage('Archive') {
             steps {
                 archiveArtifacts artifacts: '**/*.py, requirements.txt, pytest.ini', fingerprint: true
+            }
+        }
+        stage('Deploy') {
+            when {
+                expression { currentBuild.currentResult == 'SUCCESS' }
+            }
+            steps {
+                sh '''
+                docker rm -f devops-app || true
+                docker build -t devops-app .
+                docker run --name devops-app devops-app
+                '''
             }
         }
     }
