@@ -58,4 +58,28 @@ pipeline {
             }
         }
     }
+    post {
+    success {
+        withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_URL')]) {
+            sh """
+            curl -X POST -H 'Content-type: application/json' \
+            --data '{
+              "text": "✅ Pipeline SUCCESS\\n📦 Project: PipeLine-afaki-abdelmajid\\n🚀 Deploy OK"
+            }' $SLACK_URL
+            """
+        }
+    }
+
+    failure {
+        withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_URL')]) {
+            sh """
+            curl -X POST -H 'Content-type: application/json' \
+            --data '{
+              "text": "❌ Pipeline FAILED\\n📦 Project: PipeLine-afaki-abdelmajid"
+            }' $SLACK_URL
+            """
+        }
+    }
+}
+
 }
