@@ -1,11 +1,17 @@
 pipeline {
     agent any
 
+    // IMPORTANT : empêche Jenkins de refaire un checkout automatique
+    options {
+        skipDefaultCheckout(true)
+    }
+
     stages {
 
         stage('Install Python & dependencies') {
             steps {
                 sh '''
+                set -e
                 python3 --version || true
                 apt-get update
                 apt-get install -y python3 python3-pip
