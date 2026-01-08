@@ -1,5 +1,5 @@
 def main():
-    print("Bonjour et bon courage dans votre projet en DevOps")
+    print("le projet est completé. realiser en python. par afaki abdelmajid")
 
 
 if __name__ == "__main__":
