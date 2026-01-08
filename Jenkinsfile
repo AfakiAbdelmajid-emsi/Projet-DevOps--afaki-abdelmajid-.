@@ -1,22 +1,24 @@
 pipeline {
     agent any
 
-    // IMPORTANT : empêche Jenkins de refaire un checkout automatique
     options {
         skipDefaultCheckout(true)
     }
 
     stages {
 
-        stage('Install Python & dependencies') {
+        stage('Setup Python & venv') {
             steps {
                 sh '''
                 set -e
-                python3 --version || true
                 apt-get update
-                apt-get install -y python3 python3-pip
-                pip3 install --upgrade pip
-                pip3 install -r requirements.txt
+                apt-get install -y python3 python3-venv python3-pip
+
+                python3 -m venv venv
+                . venv/bin/activate
+
+                pip install --upgrade pip
+                pip install -r requirements.txt
                 '''
             }
         }
@@ -24,7 +26,8 @@ pipeline {
         stage('Run tests') {
             steps {
                 sh '''
-                python3 -m pytest
+                . venv/bin/activate
+                pytest
                 '''
             }
         }
