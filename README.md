@@ -19,12 +19,12 @@ The pipeline is fully automated:
 - **GitHub** – Source code management and webhook triggering
 - **Jenkins** – CI/CD automation server
 - **Docker** – Running Jenkins in an isolated container
+- **Slack** – Pipeline status notifications
 
 ### 🔹 Additional technologies
 - **Python** – Sample application language
 - **Pytest** – Unit testing framework
 - **ngrok** – Exposes local Jenkins to GitHub webhooks
-- **Slack** – Pipeline status notifications
 
 ---
 
