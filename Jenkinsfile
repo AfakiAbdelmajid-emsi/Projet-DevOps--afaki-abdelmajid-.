@@ -7,8 +7,9 @@ pipeline {
 
     stages {
         stage('Setup Python & venv') {
-            steps {
-                sh '''
+    steps {
+        dir('.') {
+            sh '''
                 set -e
                 apt-get update
                 apt-get install -y python3 python3-venv python3-pip
@@ -18,16 +19,20 @@ pipeline {
 
                 pip install --upgrade pip
                 pip install -r requirements.txt
-                '''
-            }
+            '''
         }
+    }
+}
+
 
         stage('Run tests') {
             steps {
-                sh '''
+                dir('.') {
+            sh '''
                 . venv/bin/activate
                 pytest
-                '''
+            '''
+        }
             }
         }
 
